@@ -10,9 +10,18 @@ const videoSchema = z.object({
   category: z.string()
 })
 
+// GET all videos
+export async function GET() {
+  const videos = await prisma.video.findMany({
+    orderBy: { createdAt: "desc" }
+  })
+
+  return NextResponse.json(videos)
+}
+
+// POST new video
 export async function POST(req: Request) {
   const body = await req.json()
-
   const parsed = videoSchema.parse(body)
 
   const video = await prisma.video.create({
@@ -20,14 +29,4 @@ export async function POST(req: Request) {
   })
 
   return NextResponse.json(video)
-}
-
-export async function GET() {
-  const videos = await prisma.video.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  })
-
-  return NextResponse.json(videos)
 }

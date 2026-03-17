@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 
-export function useVideos() {
+export function useVideo(id: string) {
   return useQuery({
-    queryKey: ["videos"],
+    queryKey: ["video", id],
     queryFn: async () => {
-      const res = await axios.get("/api/videos")
+      const res = await axios.get(`/api/videos/${id}`)
       return res.data
     }
   })
