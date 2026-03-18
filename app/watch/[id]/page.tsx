@@ -19,25 +19,35 @@ export default function WatchPage({ params }: { params: { id: string } }) {
   const recommended = data.recommended
 
   return (
-    <div className="p-6">
-      <ReactPlayer url={video.videoUrl} controls width="100%" />
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-6">
 
-      <h1 className="text-2xl font-bold mt-4">{video.title}</h1>
-      <p className="text-gray-500">{video.views} views</p>
-      <p className="mt-2">{video.description}</p>
+  {/* Video Section */}
+  <div className="lg:col-span-3">
+    <ReactPlayer url={video.videoUrl} controls width="100%" />
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold">Recommended</h2>
+    <h1 className="text-2xl font-bold mt-4">{video.title}</h1>
+    <p className="text-gray-500">{video.views} views</p>
+    <p className="mt-2">{video.description}</p>
+  </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          {recommended.map((v: any) => (
-            <div key={v.id}>
-              <Image src={v?.thumbnailUrl} alt={v.title} />
-              <p>{v.title}</p>
-            </div>
-          ))}
+  {/* Recommended */}
+  <div>
+    <h2 className="font-semibold mb-4">Recommended</h2>
+
+    <div className="space-y-4">
+      {recommended.map((v: any) => (
+        <div key={v.id} className="flex gap-3">
+          <Image
+            alt={v.title}
+            src={v.thumbnailUrl}
+            className="w-32 h-20 object-cover rounded"
+          />
+          <p className="text-sm">{v.title}</p>
         </div>
-      </div>
+      ))}
     </div>
+  </div>
+
+</div>
   )
 }
