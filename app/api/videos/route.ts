@@ -11,12 +11,22 @@ const videoSchema = z.object({
 })
 
 // GET all videos
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+
+  const page = Number(searchParams.get("page")) || 1
+  const limit = 6
+
   const videos = await prisma.video.findMany({
+    skip: (page - 1) * limit,
+    take: limit,
     orderBy: { createdAt: "desc" }
   })
 
-  return NextResponse.json(videos)
+  return NextResponse.json({
+    videos,
+    nextPage: videos.length === limit ? page + 1 : null
+  })
 }
 
 // POST new video
