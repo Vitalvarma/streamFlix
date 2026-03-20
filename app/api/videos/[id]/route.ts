@@ -35,3 +35,17 @@ export async function PATCH(
 
   return NextResponse.json(video)
 }
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const video = await prisma.video.update({
+    where: { id: Number(params.id) },
+    data: {
+      likes: { increment: 1 }
+    }
+  })
+
+  return NextResponse.json(video)
+}

@@ -5,6 +5,7 @@ import axios from "axios"
 import { useEffect } from "react"
 import ReactPlayer from "react-player"
 import Image from "next/image"
+import LikeButton from "@/components/LikeButton"
 
 export default function WatchPage({ params }: { params: { id: string } }) {
   const { data, isLoading } = useVideo(params.id)
@@ -28,6 +29,8 @@ export default function WatchPage({ params }: { params: { id: string } }) {
     <h1 className="text-2xl font-bold mt-4">{video.title}</h1>
     <p className="text-gray-500">{video.views} views</p>
     <p className="mt-2">{video.description}</p>
+    <LikeButton videoId={video.id} />
+
   </div>
 
   {/* Recommended */}
@@ -43,6 +46,7 @@ export default function WatchPage({ params }: { params: { id: string } }) {
             className="w-32 h-20 object-cover rounded"
           />
           <p className="text-sm">{v.title}</p>
+          <LikeButton videoId={v.id} likes={v.likes}/>
         </div>
       ))}
     </div>
