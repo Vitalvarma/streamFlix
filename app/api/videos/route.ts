@@ -15,9 +15,19 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
 
   const page = Number(searchParams.get("page")) || 1
+  const search = searchParams.get("search") || ""
+  const category = searchParams.get("category") || ""
+
   const limit = 6
 
   const videos = await prisma.video.findMany({
+    where: {
+      title: {
+        contains: search,
+        mode: "insensitive"
+      },
+      ...(category && { category })
+    },
     skip: (page - 1) * limit,
     take: limit,
     orderBy: { createdAt: "desc" }

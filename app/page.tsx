@@ -1,16 +1,22 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { useVideos } from "@/hooks/useVideos"
 import VideoCard from "@/components/VideoCard"
 import { useEffect, useRef } from "react"
 
 export default function Home() {
+  const searchParams = useSearchParams()
+
+  const search = searchParams.get("search") || ""
+  const category = searchParams.get("category") || ""
+
   const {
     data,
     fetchNextPage,
     hasNextPage,
     isLoading
-  } = useVideos()
+  } = useVideos(search, category)
 
   const loadMoreRef = useRef(null)
 
@@ -35,6 +41,26 @@ export default function Home() {
 
   return (
     <div className="p-6">
+
+      {/* Category Buttons */}
+      <div className="flex gap-4 mb-6">
+        {["all", "programming", "music", "tutorial"].map((cat) => (
+          <button
+            key={cat}
+            onClick={() =>
+              window.location.href =
+                cat === "all"
+                  ? "/"
+                  : `/?category=${cat}`
+            }
+            className="px-4 py-1 bg-gray-700 rounded"
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Videos */}
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {data.pages.map((page, i) => (
           <div key={i} className="contents">
@@ -45,7 +71,6 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Trigger for infinite scroll */}
       <div ref={loadMoreRef} className="h-10"></div>
     </div>
   )
