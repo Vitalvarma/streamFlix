@@ -1,15 +1,16 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-import { useVideos } from "@/hooks/useVideos"
-import VideoCard from "@/components/VideoCard"
-import { useEffect, useRef } from "react"
+import { useSearchParams } from 'next/navigation'
+import { useVideos } from '@/hooks/useVideos'
+import VideoCard from '@/components/VideoCard'
+import { Video, VideosPage } from '@/types/video'
+import { useEffect, useRef } from 'react'
 
 export default function Home() {
   const searchParams = useSearchParams()
 
-  const search = searchParams.get("search") || ""
-  const category = searchParams.get("category") || ""
+  const search = searchParams.get('search') || ''
+  const category = searchParams.get('category') || ''
 
   const {
     data,
@@ -18,7 +19,7 @@ export default function Home() {
     isLoading
   } = useVideos(search, category)
 
-  const loadMoreRef = useRef(null)
+  const loadMoreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,41 +38,38 @@ export default function Home() {
     return () => observer.disconnect()
   }, [hasNextPage, fetchNextPage])
 
-  if (isLoading) return <p className="p-10">Loading...</p>
+  if (isLoading) return <p className="p-10 text-center">Loading...</p>
 
   return (
-    <div className="p-6">
-
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Category Buttons */}
-      <div className="flex gap-4 mb-6">
-        {["all", "programming", "music", "tutorial"].map((cat) => (
+      <div className="flex gap-4 mb-6 flex-wrap">
+        {['all', 'programming', 'music', 'tutorial'].map((cat) => (
           <button
             key={cat}
             onClick={() =>
-              window.location.href =
-                cat === "all"
-                  ? "/"
-                  : `/?category=${cat}`
+              window.location.href = cat === 'all' ? '/' : `/?category=${cat}`
             }
-            className="px-4 py-1 bg-gray-700 rounded"
+            className="px-4 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors"
           >
-            {cat}
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
         ))}
       </div>
 
       {/* Videos */}
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {data.pages.map((page, i) => (
-          <div key={i} className="contents">
-            {page.videos.map((video: any) => (
+        {(data?.pages ?? []).map((page: VideosPage, i) => (
+          <div key={i}>
+            {page.videos.map((video: Video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
         ))}
       </div>
 
-      <div ref={loadMoreRef} className="h-10"></div>
+      <div ref={loadMoreRef} className="h-10" />
     </div>
   )
 }
+

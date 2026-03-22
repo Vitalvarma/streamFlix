@@ -1,13 +1,18 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import axios from "axios"
 
-export function useVideos() {
+export function useVideos(search: string = '', category: string = '') {
   return useInfiniteQuery({
-    queryKey: ["videos"],
+    queryKey: ["videos", { search, category }],
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await axios.get(`/api/videos?page=${pageParam}`)
-      return res.data
+      const params = new URLSearchParams({ page: pageParam.toString() })
+      if (search) params.append('search', search)
+      if (category) params.append('category', category)
+      const { data } = await axios.get(`/api/videos?${params.toString()}`)
+      return data
     },
-    getNextPageParam: (lastPage) => lastPage.nextPage
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    initialPageParam: 0
   })
 }
+

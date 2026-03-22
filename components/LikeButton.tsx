@@ -1,37 +1,51 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import axios from "axios"
+import { useState, useCallback } from 'react'
+import axios from 'axios'
 
 export default function LikeButton({ videoId, likes }: { videoId: number, likes?: number }) {
   const [liked, setLiked] = useState(false)
-    
-  useEffect(() => {
-    const likedVideos = JSON.parse(localStorage.getItem("liked") || "[]")
-    if (likedVideos.includes(videoId)) {
-      setLiked(true)
+
+  const getLikedVideos = useCallback(() => {
+    if (typeof window === 'undefined') return []
+    try {
+      return JSON.parse(localStorage.getItem('liked') || '[]') as number[]
+    } catch {
+      return []
     }
-  }, [videoId])
+  }, [])
 
-  const handleLike = async () => {
-    if (liked) return
+  const checkLiked = useCallback(() => {
+    const likedVideos = getLikedVideos()
+    const isLiked = likedVideos.includes(videoId)
+    setLiked(isLiked)
+    return isLiked
+  }, [videoId, getLikedVideos])
 
-    await axios.put(`/api/videos/${videoId}`)
+  const handleLike = useCallback(async () => {
+    if (checkLiked()) return
 
-    const likedVideos = JSON.parse(localStorage.getItem("liked") || "[]")
-    localStorage.setItem("liked", JSON.stringify([...likedVideos, videoId]))
+    try {
+      await axios.put(`/api/videos/${videoId}`)
 
-    setLiked(true)
-  }
+      const likedVideos = getLikedVideos()
+      const updatedLikedVideos = [...likedVideos, videoId]
+      localStorage.setItem('liked', JSON.stringify(updatedLikedVideos))
+      setLiked(true)
+    } catch (error) {
+      console.error('Failed to like video:', error)
+    }
+  }, [videoId, checkLiked, getLikedVideos])
 
   return (
     <button
       onClick={handleLike}
-      className={`mt-3 px-4 py-2 rounded ${
-        liked ? "bg-gray-500" : "bg-blue-500"
+      className={`mt-3 px-4 py-2 rounded-full transition-colors ${
+        liked ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
       } text-white`}
     >
-      {liked ? "Liked ❤️" : "Like 👍"}
+      {liked ? `Liked ❤️ (${likes ?? 0})` : `Like 👍 (${likes ?? 0})`}
     </button>
   )
 }
+
