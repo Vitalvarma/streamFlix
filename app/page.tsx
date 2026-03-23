@@ -5,6 +5,7 @@ import { useVideos } from '@/hooks/useVideos'
 import VideoCard from '@/components/VideoCard'
 import { Video, VideosPage } from '@/types/video'
 import { useEffect, useRef } from 'react'
+import VideoCardSkeleton from '@/components/VideoCardSkeleton'
 
 export default function Home() {
   const searchParams = useSearchParams()
@@ -38,8 +39,15 @@ export default function Home() {
     return () => observer.disconnect()
   }, [hasNextPage, fetchNextPage])
 
-  if (isLoading) return <p className="p-10 text-center">Loading...</p>
-
+if (isLoading) {
+  return (
+    <div className="grid grid-cols-4 gap-6 p-6">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <VideoCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Category Buttons */}

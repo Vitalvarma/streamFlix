@@ -8,7 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 import LikeButton from "@/components/LikeButton"
 import { Video } from "@/types/video"
-
+import VideoCardSkeleton from "@/components/VideoCardSkeleton"
 // This extracts the props directly from the component definition
 
 // 1. Define exactly what the player needs
@@ -39,8 +39,15 @@ export default function WatchPage({ params }: { params: { id: string } }) {
     axios.patch(`/api/videos/${params.id}`)
   }, [params.id])
 
-  if (isLoading) return <p className="p-10 text-center">Loading...</p>
-
+if (isLoading) {
+  return (
+    <div className="grid grid-cols-4 gap-6 p-6">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <VideoCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
   const video = data?.video as Video
   const recommended = data?.recommended as Video[]
   
