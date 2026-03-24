@@ -3,15 +3,13 @@
 import dynamic from "next/dynamic"
 import { useVideo } from "@/hooks/useVideo"
 import axios from "axios"
-import { useEffect } from "react"
+import { useEffect, use } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import LikeButton from "@/components/LikeButton"
 import { Video } from "@/types/video"
 import VideoCardSkeleton from "@/components/VideoCardSkeleton"
-// This extracts the props directly from the component definition
 
-// 1. Define exactly what the player needs
 interface ReactPlayerProps {
   url: string;
   controls?: boolean;
@@ -22,7 +20,6 @@ interface ReactPlayerProps {
   muted?: boolean;
 }
 
-// 2. Pass that interface to the dynamic loader
 const DynamicReactPlayer = dynamic<ReactPlayerProps>(
   () => import("react-player").then((mod) => mod.default),
   { 
@@ -31,32 +28,37 @@ const DynamicReactPlayer = dynamic<ReactPlayerProps>(
   }
 )
 
-export default function WatchPage({ params }: { params: { id: string } }) {
-  const { data, isLoading } = useVideo(params.id)
+export default function WatchPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const { data, isLoading } = useVideo(id)
 
-  // ✅ increase views
   useEffect(() => {
-    axios.patch(`/api/videos/${params.id}`)
-  }, [params.id])
+    if (id) {
+      axios.patch(`/api/videos/${id}`)
+    }
+  }, [id])
 
-if (isLoading) {
-  return (
-    <div className="grid grid-cols-4 gap-6 p-6">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <VideoCardSkeleton key={i} />
-      ))}
-    </div>
-  )
-}
-  const video = data?.video as Video
-  const recommended = data?.recommended as Video[]
-  
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-4 gap-6 p-6">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <VideoCardSkeleton key={i} />
+        ))}
+      </div>
+    )
+  }
+
+  const video = data?.video as Video | undefined
+  const recommended = data?.recommended as Video[] || []
+
+  if (!video) {
+    return <div className="p-6">Video not found</div>
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-        {/* 🎬 Video Section */}
         <div className="lg:col-span-3">
           <div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
             <DynamicReactPlayer
@@ -80,12 +82,10 @@ if (isLoading) {
               </p>
             )}
 
-            {/* 👍 Like Button */}
             <LikeButton videoId={video.id} />
           </div>
         </div>
 
-        {/* 📺 Recommended Section */}
         <div>
           <h2 className="font-bold text-xl mb-6">Recommended</h2>
 
@@ -114,7 +114,6 @@ if (isLoading) {
                   </p>
                 </div>
 
-                {/* 👍 Like Button (optional here) */}
                 <LikeButton videoId={v.id} />
               </Link>
             ))}

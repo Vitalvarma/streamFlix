@@ -29,7 +29,15 @@ export default function Navbar() {
         className="border dark:border-gray-700 bg-transparent px-3 py-1 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <ThemeToggle />
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <a
+          href="/upload"
+          className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
+        >
+          Upload
+        </a>
+      </div>
     </div>
   )
 }
