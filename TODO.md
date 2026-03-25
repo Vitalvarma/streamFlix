@@ -1,8 +1,1 @@
-# TODO: Fix Hydration Error in Streamflix
-
-## Steps:
-- [x] Step 1: Edit app/layout.tsx to add `suppressHydrationWarning={true}` to the `<html>` element
-- [ ] Step 2: Verify no hydration error after dev server restart
-- [ ] Step 3: Test theme toggle functionality
-- [x] Step 4: Hydration task complete. New upload task in TODO-Upload.md
-
+# Fix Cloudinary Upload Errors in /upload\n\n## Steps\n\n- [ ] 1. Refactor script loading to singleton (prevent re-loads)\n- [ ] 2. Use refs for persistent widgets\n- [ ] 3. Add defensive checks in upload callbacks\n- [ ] 4. Conditional listener attachment after showWidgets toggle\n- [ ] 5. Test locally (npm run dev, /upload page, upload buttons)\n- [ ] 6. Verify no errors, complete task\n\n**Current:** Starting step 1

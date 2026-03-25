@@ -12,8 +12,9 @@ interface UploadWidgetResult {
 }
 
 interface CloudinaryWidget {
-  createUploadWidget: (options: any, callback: (result: UploadWidgetResult) => void) => any
+  createUploadWidget: (options: unknown, callback: (result: UploadWidgetResult) => void) => unknown
 }
+
 
 declare global {
   interface Window {
@@ -32,18 +33,16 @@ export default function UploadPage() {
   const [showWidgets, setShowWidgets] = useState(false)
   const router = useRouter()
 
-  const handleVideoUpload = useCallback((result: UploadWidgetResult) => {
-    if (result.event === 'success') {
-      setVideoUrl(result.info.secure_url)
-      setError('')
-    }
+const handleVideoUpload = useCallback((result: UploadWidgetResult) => {
+    if (!result || !result.event || result.event !== 'success') return;
+    setVideoUrl(result.info.secure_url)
+    setError('')
   }, [])
 
-  const handleThumbnailUpload = useCallback((result: UploadWidgetResult) => {
-    if (result.event === 'success') {
-      setThumbnailUrl(result.info.secure_url)
-      setError('')
-    }
+const handleThumbnailUpload = useCallback((result: UploadWidgetResult) => {
+    if (!result || !result.event || result.event !== 'success') return;
+    setThumbnailUrl(result.info.secure_url)
+    setError('')
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,8 +118,10 @@ export default function UploadPage() {
       const videoBtn = document.getElementById('video-upload-widget')
       const thumbnailBtn = document.getElementById('thumbnail-upload-widget')
       
-      videoBtn?.addEventListener('click', () => videoWidget.open())
-      thumbnailBtn?.addEventListener('click', () => thumbnailWidget.open())
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      videoBtn?.addEventListener('click', () => (videoWidget as any).open())
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      thumbnailBtn?.addEventListener('click', () => (thumbnailWidget as any).open())
     }
     document.head.appendChild(script)
 
