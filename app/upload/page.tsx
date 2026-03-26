@@ -169,22 +169,34 @@ const handleThumbnailUpload = useCallback((result: UploadWidgetResult) => {
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-medium mb-2">Category *</label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            aria-required="true"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select category</option>
-            <option value="programming">Programming</option>
-            <option value="music">Music</option>
-            <option value="tutorial">Tutorial</option>
-            <option value="gaming">Gaming</option>
-          </select>
-        </div>
+  <label
+    htmlFor="category"
+    className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
+  >
+    Category *
+  </label>
+
+  <select
+    id="category"
+    value={category}
+    onChange={(e) => setCategory(e.target.value)}
+    required
+    aria-required="true"
+    className="w-full px-3 py-2 border rounded-lg 
+               bg-white text-black 
+               dark:bg-gray-900 dark:text-white 
+               border-gray-300 dark:border-gray-700 
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="" className="bg-white dark:bg-gray-900">
+      Select category
+    </option>
+    <option value="programming">Programming</option>
+    <option value="music">Music</option>
+    <option value="tutorial">Tutorial</option>
+    <option value="gaming">Gaming</option>
+  </select>
+</div>
 
         <div>
           <button
